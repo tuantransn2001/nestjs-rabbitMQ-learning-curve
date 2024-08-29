@@ -1,8 +1,15 @@
 import { Module } from '@nestjs/common';
-import { mongooseProvider } from './database.provider';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  providers: [...mongooseProvider],
-  exports: [...mongooseProvider],
+  imports: [
+    MongooseModule.forRootAsync({
+      useFactory: () => {
+        return {
+          uri: 'connection string go here',
+        };
+      },
+    }),
+  ],
 })
 export class DatabaseModule {}
