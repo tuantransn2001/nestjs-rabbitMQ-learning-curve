@@ -1,16 +1,13 @@
-import { Document, FilterQuery, Model, QueryOptions } from 'mongoose';
+import mongoose, { Document, FilterQuery, Model, QueryOptions } from 'mongoose';
 
 export interface BaseCRUDRepository<T> {
   create(dto: T): Promise<T>;
-  pureOne(id: string, projection?: string): Promise<T | null>;
-  findOneByCondition(
-    condition?: FilterQuery<T>,
-    projection?: string,
-  ): Promise<T>;
+  pureOne(id: mongoose.Types.ObjectId, projection?: T): Promise<T | null>;
+  findOneByCondition(condition?: FilterQuery<T>, projection?: T): Promise<T>;
   update(filter: FilterQuery<T>, dto: Partial<T>): Promise<T>;
   findAll(
     condition?: FilterQuery<T>,
-    projection?: string,
+    projection?: T,
     options?: QueryOptions,
   ): Promise<T[]>;
 }
@@ -26,7 +23,7 @@ export class BaseCRUDRepositoryImpl<T extends Document>
 
   public async findAll(
     condition?: FilterQuery<T>,
-    projection?: string,
+    projection?: T,
     options?: QueryOptions,
   ): Promise<T[]> {
     return this._model.find(condition, projection, options).exec();
@@ -37,8 +34,11 @@ export class BaseCRUDRepositoryImpl<T extends Document>
     return created_document?.toObject();
   }
 
-  public async pureOne(id: string): Promise<T | null> {
-    const founded_document = await this._model.findById(id);
+  public async pureOne(
+    id: mongoose.Types.ObjectId,
+    projection?: T,
+  ): Promise<T | null> {
+    const founded_document = await this._model.findById(id, projection);
     return founded_document?.toObject();
   }
 

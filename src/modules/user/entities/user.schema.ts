@@ -12,22 +12,25 @@ import { BaseEntity } from 'src/shared/entity/base.entity';
   },
 })
 export class UserSchemaClass extends BaseEntity {
-  constructor(user: Partial<UserSchemaClass>) {
-    super({
-      createdAt: user?.createdAt,
-      updatedAt: user?.updatedAt,
-      deletedAt: user?.deletedAt,
-    });
-    this._id = user?._id || UserSchemaClass.generateId();
-    this.email = user.email;
-    this.password = user.password;
-    this.firstName = user.firstName;
-    this.lastName = user.lastName;
+  public static toDto(user: UserSchemaClass) {
+    return {
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 
   public static generateId() {
     return new mongoose.Types.ObjectId();
   }
+
+  @Prop({
+    type: mongoose.Types.ObjectId,
+  })
+  _id: mongoose.Types.ObjectId;
 
   @Prop({
     type: String,
