@@ -9,7 +9,7 @@ import {
   UserSchemaClass,
   UserSchemaDocument,
 } from '../user/entities/user.schema';
-import { PasswordEncrypt } from 'src/common/utils/enscrypt/password-enscrypt';
+import { PasswordEncrypt } from 'src/common/utils/encrypt/password-enscrypt';
 import { LoginResponse } from './dto/auth.response.dto';
 import { UserResponse } from '../user/dto/user.response';
 import mongoose from 'mongoose';
@@ -42,7 +42,7 @@ export class AuthServiceImpl implements AuthService {
     password: string,
   ): Promise<UserSchemaDocument> {
     const user = await this.userRepository.findByEmail(email);
-
+    
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -61,7 +61,7 @@ export class AuthServiceImpl implements AuthService {
     }
 
     return user;
-}
+  }
 
   public login(user: UserSchemaClass): LoginResponse {
     const token = this.userRepository.generateToken(user);
