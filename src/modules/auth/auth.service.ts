@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -13,10 +14,14 @@ import { PasswordEncrypt } from 'src/common/utils/encrypt/password-enscrypt';
 import { LoginResponse } from './dto/auth.response.dto';
 import { UserResponse } from '../user/dto/user.response';
 import mongoose from 'mongoose';
+import { AuthTokenRepositoryInject } from '../auth-token/persistence/auth-token.repository';
+import { AuthTokenRepository } from '../auth-token/repository/auth-token.repository';
+import { AuthTokenSchemaClass } from '../auth-token/entities/auth-token.entity';
 
 export interface AuthService {
   authentication(email: string, password: string): Promise<UserSchemaDocument>;
-  login(user: UserSchemaClass): LoginResponse;
+  login(user: UserSchemaClass): Promise<LoginResponse>;
+  logout(token: string): Promise<any>;
 }
 
 @Injectable()
@@ -24,7 +29,23 @@ export class AuthServiceImpl implements AuthService {
   constructor(
     @UserRepositoryInject()
     private readonly userRepository: UserRepository,
+    @AuthTokenRepositoryInject()
+    private readonly authTokenRepository: AuthTokenRepository,
   ) {}
+
+  public async logout(token): Promise<any> {
+    try {
+      await this.authTokenRepository.deleteOne({
+        token,
+      });
+      return {
+        success: true,
+        message: 'Logout successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Error in logout process');
+    }
+  }
 
   private userMapper(user: UserSchemaClass): UserResponse {
     return {
@@ -42,7 +63,7 @@ export class AuthServiceImpl implements AuthService {
     password: string,
   ): Promise<UserSchemaDocument> {
     const user = await this.userRepository.findByEmail(email);
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -63,8 +84,17 @@ export class AuthServiceImpl implements AuthService {
     return user;
   }
 
-  public login(user: UserSchemaClass): LoginResponse {
+  public async login(user: UserSchemaClass): Promise<LoginResponse> {
     const token = this.userRepository.generateToken(user);
+
+    // ? Store token in database
+    await this.authTokenRepository.create({
+      _id: AuthTokenSchemaClass.generateId(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: user._id,
+      token: token.accessToken,
+    });
 
     return {
       accessToken: token.accessToken,

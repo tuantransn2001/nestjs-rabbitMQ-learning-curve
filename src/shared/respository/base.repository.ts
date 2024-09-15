@@ -10,6 +10,7 @@ export interface BaseCRUDRepository<T> {
     projection?: T,
     options?: QueryOptions,
   ): Promise<T[]>;
+  deleteOne(filter: FilterQuery<T>): Promise<T>;
 }
 
 export class BaseCRUDRepositoryImpl<T extends Document>
@@ -19,6 +20,10 @@ export class BaseCRUDRepositoryImpl<T extends Document>
 
   constructor(protected readonly model: Model<T>) {
     this._model = model;
+  }
+
+  public async deleteOne(filter: FilterQuery<T>): Promise<T> {
+    return this._model.findOneAndDelete(filter);
   }
 
   public async findAll(
