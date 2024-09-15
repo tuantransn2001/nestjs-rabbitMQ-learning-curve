@@ -6,6 +6,7 @@ import { UserServiceProvider } from './persistence/user.service';
 import { UserRepositoryProvider } from './persistence/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { UserController } from './user.controller';
+import { CacheManagerProvider } from '../cache-manager/persistence/cache-manager.service';
 
 @Module({
   imports: [
@@ -16,7 +17,12 @@ import { UserController } from './user.controller';
       },
     ]),
   ],
-  providers: [UserServiceProvider, UserRepositoryProvider, JwtService],
+  providers: [
+    UserServiceProvider,
+    UserRepositoryProvider,
+    JwtService,
+    CacheManagerProvider,
+  ],
   controllers: [UserController],
 })
 export class UserModule {}
