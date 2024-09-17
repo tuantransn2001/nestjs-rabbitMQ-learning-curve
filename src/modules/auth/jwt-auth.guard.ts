@@ -49,7 +49,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }),
     ]);
 
-    if (!!userProfile && authTokens.length > 0) {
+    if (
+      !!userProfile &&
+      authTokens.length > 0 &&
+      authTokens.some((authToken) => authToken.token === token)
+    ) {
       const canActivate = (await super.canActivate(context)) as boolean;
       return canActivate;
     } else {
