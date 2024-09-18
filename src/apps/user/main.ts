@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { USER_SERVICE } from 'src/modules/user/constants/service';
-import { UserModule } from 'src/modules/user/user.module';
 import {
   RabbitMqService,
   RabbitMqServiceImpl,
 } from 'src/rabbit-mq/rabbit-mq.service';
+import { UserModule } from './src/user.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
