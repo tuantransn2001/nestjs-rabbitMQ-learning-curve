@@ -1,3 +1,5 @@
+import { USER_SERVICE } from 'src/modules/user/constants/service';
+
 export const ENVConfig = () => ({
   database: {
     connection_string: process.env.MONGODB_CONNECTION_STRING,
@@ -12,5 +14,11 @@ export const ENVConfig = () => ({
     host: process.env.REDIS_HOST,
     port: Number(process.env.REDIS_PORT),
     ttl: Number(process.env.REDIS_TTL),
+  },
+  rabbitMq: {
+    connection_string: process.env.RABBIT_MQ_URI || 'amqp://rabbitMQ:5672 ',
+    names: {
+      [USER_SERVICE]: process.env.RABBIT_MQ_USER_QUEUE,
+    },
   },
 });
