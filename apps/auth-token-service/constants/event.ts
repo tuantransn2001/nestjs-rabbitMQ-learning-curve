@@ -1,0 +1,5 @@
+export const AUTH_TOKEN_EVENT = {
+  CREATE: 'CREATE',
+  DELETE: 'DELETE',
+  CHECK_EXIST: 'CHECK_EXIST',
+};

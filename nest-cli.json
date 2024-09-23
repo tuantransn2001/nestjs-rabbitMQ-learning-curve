@@ -5,5 +5,7 @@
   "compilerOptions": {
     "deleteOutDir": true
   },
-  "entryFile": "apps/api/main.js"
+  "entryFile": "apps/auth-token-service/main.js",
+  "_entryFile": "apps/user-service/main.js",
+  "__entryFile": "apps/auth-service/main.js"
 }
